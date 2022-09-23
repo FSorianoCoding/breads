@@ -14,12 +14,15 @@ function Index ({breads})  {
                             <li key={index}>
                                 <a href={`/breads/${index}`}>
                                     {bread.name}
-                                </a>
-                            </li>
+                                </a>                                
+                            </li>                            
                         )
                     })
                 }
             </ul>
+            <div className="newButton">
+                <a href="/breads/new"><button>Add a new bread</button></a>
+            </div>
         </Default> 
     )
 }
