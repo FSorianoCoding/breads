@@ -18,14 +18,6 @@ breads.get("/new", (req, res) => {
   res.render("new");
 });
 
-// EDIT
-breads.get("/:indexArray/edit", (req, res) => {
-  res.render("edit", {
-    bread: Bread[req.params.indexArray],
-    index: req.params.indexArray,
-  });
-});
-
 // SHOW
 breads.get("/:id", (req, res) => {
   Bread.findById(req.params.id)
@@ -37,6 +29,14 @@ breads.get("/:id", (req, res) => {
     .catch(err => {
       res.send("404");
     });
+});
+
+// EDIT
+breads.get("/:indexArray/edit", (req, res) => {
+  res.render("edit", {
+    bread: Bread[req.params.indexArray],
+    index: req.params.indexArray,
+  });
 });
 
 // CREATE
