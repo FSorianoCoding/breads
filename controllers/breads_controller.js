@@ -5,18 +5,15 @@ const Baker = require("../models/baker.js");
 // models are what data is supposed to look like or has to look like.
 
 // Index:
-breads.get('/', (req, res) => {
-  Baker.find()
-    .then(foundBakers => {
-      Bread.find()
-      .then(foundBreads => {
-          res.render('index', {
-              breads: foundBreads,
-              bakers: foundBakers,
-              title: 'Index Page'
-          })
-      })
-    })
+breads.get('/', async (req, res) => {
+  console.log('--------')
+  const foundBakers = await Baker.find().lean() 
+  const foundBreads = await Bread.find().limit(2).lean() 
+  res.render('index', {
+    breads: foundBreads,
+    bakers: foundBakers,
+    title: 'Index Page'
+  })
 })
 
 // NEW
@@ -32,16 +29,14 @@ breads.get('/new', (req, res) => {
 // SHOW
 breads.get('/:id', (req, res) => {
   Bread.findById(req.params.id)
-      .populate('baker')
       .then(foundBread => {
+        const bakedBy = foundBread.getBakedBy() 
+        console.log(bakedBy)
         res.render('show', {
             bread: foundBread
         })
       })
-      .catch(err => {
-        res.send('404')
-      })
-})
+    })
 
 // EDIT
 breads.get('/:id/edit', (req, res) => {
@@ -51,7 +46,7 @@ breads.get('/:id/edit', (req, res) => {
           .then(foundBread => {
             res.render('edit', {
                 bread: foundBread, 
-                bakers: foundBakers 
+                bakers: foundBakers
             })
           })
     })
@@ -73,7 +68,8 @@ breads.post("/", (req, res) => {
 
 // DELETE
 breads.delete("/:id", (req, res) => {
-  Bread.findByIdAndDelete(req.params.id).then((deletedBread) => {
+  Bread.findByIdAndDelete(req.params.id)
+  .then((deletedBread) => {
     res.status(303).redirect("/breads");
   });
 });
@@ -85,8 +81,8 @@ breads.put("/:id", (req, res) => {
   } else {
     req.body.hasGluten = false;
   }
-  Bread.findByIdAndUpdate(req.params.id, req.body, { new: true }).then(
-    (updatedBread) => {
+  Bread.findByIdAndUpdate(req.params.id, req.body, { new: true })
+  .then((updatedBread) => {
       console.log(updatedBread);
       res.redirect(`/breads/${req.params.id}`);
     }
